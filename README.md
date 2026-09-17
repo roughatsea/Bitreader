@@ -69,10 +69,11 @@ Run without arguments for a built-in sample, or supply a binary file path:
 
 ```powershell
 .\x64\Debug\Bitreader.exe # Run the Visual Studio Debug build with no path argument to parse and print the built-in sample.
-.\x64\Debug\Bitreader.exe "C:\path\sample.bin" # Pass a binary file path to the same program so its file-input branch uses the shared parser.
+.\x64\Debug\Bitreader.exe .\sample.bin # Parse the included binary sample file from the project directory.
 ```
 
-The sample's bytes are `B0 02 12 3B AB CD E2 45 64 12 34 57`. It decodes to
+The included `sample.bin` contains the same 12 bytes as the built-in sample:
+`B0 02 12 3B AB CD E2 45 64 12 34 57`. It decodes to
 version 5, tagged true, and two records: ID 291 with magnitude 703710, and
 ID 1110 with magnitude 74565. The existing `test.txt` is plain text and is not
 a valid document in this format.
