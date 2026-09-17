@@ -1,11 +1,11 @@
 #include "../BinaryParser.h" // Expose the production parser and its models to the tests from the parent directory.
 
-#include <cstdint> // Provide fixed-width integer types used to store and assemble the binary fields.
-#include <iostream> // Provide std::cout and std::cerr for normal output and error reporting below.
-#include <limits> // Provide numeric_limits for checking field capacity or testing the largest integer value.
-#include <sstream> // Provide in-memory input streams so sample bytes can use the same parser as files.
-#include <stdexcept> // Provide exception types used to report invalid inputs and failures to the caller.
-#include <string> // Provide strings for sample bytes, file paths, and diagnostic messages.
+#include <cstdint> // Provide fixed-width integer types used to store and assemble the binary fields. Angle syntax: The < and > delimit cstdint as a header name for the preprocessor's configured include search paths, bringing in the library declarations used below.
+#include <iostream> // Provide std::cout and std::cerr for normal output and error reporting below. Angle syntax: The < and > delimit iostream as a header name for the preprocessor's configured include search paths, bringing in the library declarations used below.
+#include <limits> // Provide numeric_limits for checking field capacity or testing the largest integer value. Angle syntax: The < and > delimit limits as a header name for the preprocessor's configured include search paths, bringing in the library declarations used below.
+#include <sstream> // Provide in-memory input streams so sample bytes can use the same parser as files. Angle syntax: The < and > delimit sstream as a header name for the preprocessor's configured include search paths, bringing in the library declarations used below.
+#include <stdexcept> // Provide exception types used to report invalid inputs and failures to the caller. Angle syntax: The < and > delimit stdexcept as a header name for the preprocessor's configured include search paths, bringing in the library declarations used below.
+#include <string> // Provide strings for sample bytes, file paths, and diagnostic messages. Angle syntax: The < and > delimit string as a header name for the preprocessor's configured include search paths, bringing in the library declarations used below.
 
 namespace { // Give the following helper functions or test data internal linkage within this source file.
 
@@ -18,7 +18,7 @@ void require(bool condition, const char* message) // Define an assertion helper 
     } // End the branch guarded by !condition; subsequent lines belong to its enclosing scope.
 } // End the require function body; subsequent lines belong to its enclosing scope.
 
-template<typename Exception, typename Function> // Parameterize the following assertion by expected exception type and callable action.
+template<typename Exception, typename Function> // Parameterize the following assertion by expected exception type and callable action. Angle syntax: The < and > enclose template parameter declarations; they let the following helper be instantiated for the particular expected exception type and callable used at each call.
 void requireThrows(Function action, const char* message) // Define a helper that runs an action and requires it to throw the specified exception type.
 { // Begin requireThrows's body; the following statements implement the declaration immediately above.
     try { // Run the following test operation under the exception handler immediately below.
@@ -37,31 +37,31 @@ void testBitReader() // Define tests of ordering, field widths, byte boundaries,
     require(reader.readBits(9) == 0x136, "Cross-byte field is incorrect"); // Check the next nine bits, 100110110, spanning the remainder of B3 and the start of 6D.
     require(reader.readBits(4) == 13, "Remaining bits are incorrect"); // Check that the final nibble of 6D is still available after the cross-byte read.
     require(reader.getBitPosition() == 16, "Bit position is incorrect"); // Verify that the three successful reads consumed exactly both input bytes.
-    requireThrows<std::runtime_error>([&] { reader.readBits(1); }, "EOF was not rejected"); // Require another read past those two bytes to throw rather than supply an invented bit.
+    requireThrows<std::runtime_error>([&] { reader.readBits(1); }, "EOF was not rejected"); // Require another read past those two bytes to throw rather than supply an invented bit. Angle syntax: The <std::runtime_error> selects the exception type that requireThrows must catch, making this test distinguish the intended error from an unrelated exception.
 
     std::istringstream wideInput(std::string("\x01\x23\x45\x67\x89\xAB\xCD\xEF", 8)); // Provide eight distinct bytes to test a full-width unsigned read and field significance.
     bitreader::BitReader wideReader(wideInput); // Use a separate reader so invalid-width checks cannot interfere with the earlier ordering test.
-    requireThrows<std::invalid_argument>([&] { wideReader.readBits(0); }, "Zero width was accepted"); // Verify that a zero-bit request fails validation before reading the fixture.
-    requireThrows<std::invalid_argument>([&] { wideReader.readBits(65); }, "Excessive width was accepted"); // Verify that a request larger than the 64-bit result fails validation.
+    requireThrows<std::invalid_argument>([&] { wideReader.readBits(0); }, "Zero width was accepted"); // Verify that a zero-bit request fails validation before reading the fixture. Angle syntax: The <std::invalid_argument> selects the exception type that requireThrows must catch, making this test distinguish the intended error from an unrelated exception.
+    requireThrows<std::invalid_argument>([&] { wideReader.readBits(65); }, "Excessive width was accepted"); // Verify that a request larger than the 64-bit result fails validation. Angle syntax: The <std::invalid_argument> selects the exception type that requireThrows must catch, making this test distinguish the intended error from an unrelated exception.
     require(wideReader.getBitPosition() == 0, "Invalid width consumed input"); // Check that both rejected width requests left the stream position unchanged.
     require(wideReader.readBits(64) == UINT64_C(0x0123456789ABCDEF), "64-bit value is incorrect"); // Read all eight bytes and check that their ordered bits form the expected 64-bit value.
 
-    std::istringstream maximumInput(std::string(8, static_cast<char>(0xFF))); // Provide eight all-one bytes to exercise the largest representable reader result.
+    std::istringstream maximumInput(std::string(8, static_cast<char>(0xFF))); // Provide eight all-one bytes to exercise the largest representable reader result. Angle syntax: The <char> names the explicit conversion's target type; this adapts the all-one byte pattern to the char element type required by the string fixture.
     bitreader::BitReader maximumReader(maximumInput); // Create a reader for this maximum-value fixture, separate from previous reader state.
-    require(maximumReader.readBits(64) == std::numeric_limits<std::uint64_t>::max(), // Check a full-width read against uint64_t's maximum; its failure message follows.
+    require(maximumReader.readBits(64) == std::numeric_limits<std::uint64_t>::max(), // Check a full-width read against uint64_t's maximum; its failure message follows. Angle syntax: The <std::uint64_t> specializes numeric_limits for std::uint64_t, so this line uses the exact uint64_t capacity instead of a hard-coded maximum.
             "Maximum 64-bit value is incorrect"); // Complete the preceding assertion with a diagnostic for a lost or incorrectly shifted high bit.
 
-    std::istringstream unalignedInput(std::string("\x80", 1) + std::string(8, static_cast<char>(0xFF))); // Provide one leading set bit, seven zero bits, then eight all-one bytes for an unaligned full-width read.
+    std::istringstream unalignedInput(std::string("\x80", 1) + std::string(8, static_cast<char>(0xFF))); // Provide one leading set bit, seven zero bits, then eight all-one bytes for an unaligned full-width read. Angle syntax: The <char> names the explicit conversion's target type; this adapts the all-one byte pattern to the char element type required by the string fixture.
     bitreader::BitReader unalignedReader(unalignedInput); // Start a new reader whose byte cache will become partially consumed by the next assertion.
     require(unalignedReader.readBits(1) == 1, "Leading bit is incorrect"); // Consume the first set bit so the following 64-bit read starts inside a byte.
-    require(unalignedReader.readBits(64) == (UINT64_C(1) << 57) - 1, // Check that seven zeros followed by fifty-seven ones form the expected unaligned result.
+    require(unalignedReader.readBits(64) == (UINT64_C(1) << 57) - 1, // Check that seven zeros followed by fifty-seven ones form the expected unaligned result. Angle syntax: The integer << 57 moves the unsigned value one to bit 57; subtracting one then forms fifty-seven low set bits, the expected unaligned-read result.
             "Unaligned 64-bit read is incorrect"); // Complete that assertion with a diagnostic for boundary or shift errors.
     require(unalignedReader.readBits(7) == 127, "Unaligned read consumed extra bits"); // Verify the remaining seven ones were not consumed by the preceding 64-bit read.
 
     std::istringstream failedInput(sample); // Provide otherwise valid bytes for a test that explicitly simulates stream failure.
     failedInput.setstate(std::ios::badbit); // Mark that stream as broken so the next byte fetch takes the reader's input-error path.
     bitreader::BitReader failedReader(failedInput); // Wrap the broken stream without reading it yet, allowing the assertion below to observe failure.
-    requireThrows<std::runtime_error>([&] { failedReader.readBits(1); }, "Stream error was not rejected"); // Require the simulated input error to propagate as an exception from the reader.
+    requireThrows<std::runtime_error>([&] { failedReader.readBits(1); }, "Stream error was not rejected"); // Require the simulated input error to propagate as an exception from the reader. Angle syntax: The <std::runtime_error> selects the exception type that requireThrows must catch, making this test distinguish the intended error from an unrelated exception.
 } // End the testBitReader function body; subsequent lines belong to its enclosing scope.
 
 void testDocument() // Define checks that the shared fixture is decoded into the correct nested parent and child objects.
@@ -127,10 +127,10 @@ void testEmptyAndMaximumFields() // Define checks for zero-record documents and 
 void testTruncatedDocuments() // Define checks that every incomplete sample prefix fails instead of returning partial nested data.
 { // Begin testTruncatedDocuments's body; the following statements implement the declaration immediately above.
     // Every incomplete prefix must fail rather than return a partially filled hierarchy.
-    for (std::size_t length = 0; length < sample.size(); ++length) { // Try every byte length shorter than the complete fixture, including an entirely empty stream.
+    for (std::size_t length = 0; length < sample.size(); ++length) { // Try every byte length shorter than the complete fixture, including an entirely empty stream. Angle syntax: The < comparison selects only lengths shorter than the full fixture, so every iteration tests an incomplete document and the complete sample is excluded.
         std::istringstream input(sample.substr(0, length)); // Create the current truncated prefix as a fresh stream for this loop iteration.
         bitreader::BitReader reader(input); // Create a reader over this test's stream; the following assertions observe its consuming operations.
-        requireThrows<std::runtime_error>([&] { bitreader::readDocument(reader); }, // Require the root parser or one of its child parsers to reject this incomplete input.
+        requireThrows<std::runtime_error>([&] { bitreader::readDocument(reader); }, // Require the root parser or one of its child parsers to reject this incomplete input. Angle syntax: The <std::runtime_error> selects the exception type that requireThrows must catch, making this test distinguish the intended error from an unrelated exception.
                                          "Truncated document was accepted"); // Complete the missing-exception assertion with a diagnostic for incorrectly accepted partial data.
         require(reader.getBitPosition() == length * 8, "Truncation position is incorrect"); // Verify the reader consumed all available prefix bits and no fabricated bits after end-of-file.
     } // End the incomplete-prefix loop after checking every shorter fixture length.
@@ -145,9 +145,9 @@ int main() // Define the test executable's entry point that runs each group and 
         testDocument(); // Run nested-object and record-by-record checks using the known two-record fixture.
         testEmptyAndMaximumFields(); // Run zero-count and maximum-field checks after ordinary document parsing.
         testTruncatedDocuments(); // Run every incomplete-prefix check to verify exceptions prevent incomplete documents.
-        std::cout << "All parser tests passed.\n"; // Print success only after all test functions above return without an assertion failure.
+        std::cout << "All parser tests passed.\n"; // Print success only after all test functions above return without an assertion failure. Angle syntax: Each << is the output stream's insertion operator: it sends the following value or formatting manipulator to the same stream and returns that stream so the expression can be chained.
     } catch (const std::exception& error) { // Catch a failed assertion or unexpected standard exception from any test group above.
-        std::cerr << "Test failure: " << error.what() << '\n'; // Display the exception's diagnostic to identify which check or reader operation failed.
+        std::cerr << "Test failure: " << error.what() << '\n'; // Display the exception's diagnostic to identify which check or reader operation failed. Angle syntax: Each << is the output stream's insertion operator: it sends the following value or formatting manipulator to the same stream and returns that stream so the expression can be chained.
         return 1; // Report a nonzero failure exit code to PowerShell after the caught test failure.
     } // End the exception handler; subsequent lines belong to its enclosing scope.
     return 0; // Report success after every test group has completed.

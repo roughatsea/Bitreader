@@ -29,7 +29,7 @@ without loading the entire file. `BinaryParser.cpp` maps unsigned fields to
 setters and builds larger models from smaller models:
 
 ```cpp
-readField<12>(reader, metadata, &RecordMetadata::setId); // Consume twelve bits and pass the numeric value to the metadata object's ID setter.
+readField<12>(reader, metadata, &RecordMetadata::setId); // Consume twelve bits and pass the numeric value to the metadata object's ID setter. Angle syntax: The <12> is a compile-time template argument selecting a 12-bit field; Model and Value are inferred from the object and setter, and static_assert checks the width.
 record.setMetadata(readRecordMetadata(reader)); // Parse the metadata child first and attach it to the parent record through its setter.
 record.setMeasurement(readMeasurement(reader)); // Parse the next child with the same advancing reader and attach the measurement to that record.
 ```
@@ -85,7 +85,7 @@ read the header and process one record at a time instead:
 ```cpp
 bitreader::BitReader reader(input); // Borrow the existing input stream so the header and each record share one consuming bit position.
 const auto header = bitreader::readFileHeader(reader); // Parse only the header to learn how many records follow without retaining a full document.
-for (std::uint16_t i = 0; i < header.getRecordCount(); ++i) { // Process the number of records declared by the header, one iteration at a time.
+for (std::uint16_t i = 0; i < header.getRecordCount(); ++i) { // Process the number of records declared by the header, one iteration at a time. Angle syntax: The < comparison keeps the zero-based record index below the header's count, processing exactly that many records without attempting an extra one.
     const auto record = bitreader::readRecord(reader); // Assemble one record's nested children from the next forty bits without storing previous records.
     // Process record here, then let it go out of scope.
 } // End the loop iteration; its local record is destroyed before the next iteration creates another.

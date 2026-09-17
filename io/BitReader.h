@@ -1,7 +1,7 @@
 #pragma once // Include this header only once per translation unit, preventing repeated class or function declarations.
 
-#include <cstdint> // Provide fixed-width integer types used to store and assemble the binary fields.
-#include <istream> // Provide std::istream, the common interface borrowed by BitReader for file or memory input.
+#include <cstdint> // Provide fixed-width integer types used to store and assemble the binary fields. Angle syntax: The < and > delimit cstdint as a header name for the preprocessor's configured include search paths, bringing in the library declarations used below.
+#include <istream> // Provide std::istream, the common interface borrowed by BitReader for file or memory input. Angle syntax: The < and > delimit istream as a header name for the preprocessor's configured include search paths, bringing in the library declarations used below.
 
 namespace bitreader { // Place these reader, model, or parser definitions in the shared bitreader namespace.
 
