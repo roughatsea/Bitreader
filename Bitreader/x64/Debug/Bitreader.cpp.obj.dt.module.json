@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Bitreader\\x64\\Debug\\Bitreader.obj",
+            "outputs": [
+                "Bitreader\\x64\\Debug\\Bitreader.cpp.obj.dt.module.json",
+                "Bitreader\\x64\\Debug\\Bitreader.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

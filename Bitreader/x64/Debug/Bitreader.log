@@ -1,0 +1,3 @@
+﻿  Bitreader.cpp
+C:\repos\Bitreader\Bitreader.cpp(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Bitreader.vcxproj -> C:\repos\Bitreader\x64\Debug\Bitreader.exe
