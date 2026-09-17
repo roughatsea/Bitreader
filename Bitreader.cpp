@@ -1,46 +1,64 @@
-// Bitreader.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+﻿#include "BinaryParser.h" // Bring the parser declarations, reader, and nested models into this implementation.
 
-#include <iostream>0
-#include <fstream>
-#include <bitset> // Required for std::bitset
+#include <fstream> // Provide std::ifstream for reading an external file as the parser's input stream.
+#include <iostream> // Provide std::cout and std::cerr for normal output and error reporting below.
+#include <sstream> // Provide in-memory input streams so sample bytes can use the same parser as files.
+#include <stdexcept> // Provide exception types used to report invalid inputs and failures to the caller.
+#include <string> // Provide strings for sample bytes, file paths, and diagnostic messages.
 
-int main()
-{
-    std::ifstream file("test.txt", std::ios::binary);
-    if (!file) return 1;
+namespace { // Give the following helper functions or test data internal linkage within this source file.
 
-    char byte;
-    while (file.get(byte)) {
-        // Convert the byte into an 8-bit array-like structure
-        std::bitset<8> bits(byte);
+void printDocument(const bitreader::BinaryDocument& document) // Define a printer that traverses the assembled hierarchy without copying or modifying it.
+{ // Begin printDocument's body; the following statements implement the declaration immediately above.
+    const auto& header = document.getHeader(); // Borrow the root's header for reading its nested format and record count below.
+    const auto& format = header.getFormat(); // Borrow the header's FormatInfo child to display its leaf fields below.
+    std::cout << "BinaryDocument\n" // Start one chained output expression by printing the root model's name.
+              << "  Header\n" // Continue the expression with indentation that shows the header belongs to the root.
+              << "    Format: version=" << static_cast<unsigned>(format.getVersion()) // Display the nested version numerically; converting uint8_t avoids treating it as a character.
+              << ", tagged=" << std::boolalpha << format.getTagged() << '\n' // Display the format's flag as true or false, enabling that formatting for subsequent bool output.
+              << "    Record count: " << header.getRecordCount() << '\n'; // Finish the header output expression with the count that guided record parsing.
 
-        // You can print the whole byte in binary easily:
-        std::cout << "Byte in binary: " << bits << std::endl;
+    for (const auto& record : document.getRecords()) { // Visit every record owned by the root, borrowing each element instead of copying it.
+        const auto& metadata = record.getMetadata(); // Borrow this record's metadata child for the following ID, category, and flag output.
+        const auto& measurement = record.getMeasurement(); // Borrow this record's measurement child for the following magnitude and exponent output.
+        std::cout << "  Record\n" // Start a new output chain for the current record with root-child indentation.
+                  << "    Metadata: id=" << metadata.getId() // Continue the record output by displaying its metadata child's ID.
+                  << ", category=" << static_cast<unsigned>(metadata.getCategory()) // Display the three-bit category as a number rather than a uint8_t character.
+                  << ", active=" << metadata.getActive() << '\n' // Finish the metadata line using the bool formatting enabled in the header output.
+                  << "    Measurement: magnitude=" << measurement.getMagnitude() // Continue the same output chain with the record's measurement magnitude.
+                  << ", exponent=" << static_cast<unsigned>(measurement.getExponent()) // Display the four-bit exponent numerically, avoiding character output.
+                  << '\n'; // Terminate the current record's output chain and move the next output to a new line.
+    } // End the record-printing loop after displaying each pair of child objects.
+} // End the printDocument function body; subsequent lines belong to its enclosing scope.
 
-        // Or you can access individual bits like an array.
-        // NOTE: bits[0] is the Least Significant Bit (the rightmost bit).
-        // bits[7] is the Most Significant Bit (the leftmost bit).
-        //std::cout << "Bit 7 (MSB): " << bits[7] << std::endl;
-        //std::cout << "Bit 0 (LSB): " << bits[0] << std::endl;
-        for (int bit_index = 7; bit_index >= 0; bit_index--)
-        {
-            std::cout << bits[bit_index];
-        }
-        std::cout << std::endl;
-    }
+} // Close the file-local helper namespace; the helpers above remain private to this source file.
 
-    std::cin.get();
-    return 0;
-}
+int main(int argc, char* argv[]) // Define the program entry point; argc and argv select sample input or a supplied file path.
+{ // Begin main's body; the following statements implement the declaration immediately above.
+    if (argc > 2) { // Reject more than one user argument because the program accepts only an optional input path.
+        std::cerr << "Usage: Bitreader [binary-file]\n"; // Explain the accepted command syntax when the argument-count check above fails.
+        return 1; // Return a failure exit code to PowerShell for the invalid arguments or caught error above.
+    } // End the branch guarded by argc > 2; subsequent lines belong to its enclosing scope.
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+    try { // Start the protected input-and-parsing path so the catch block below can report exceptions.
+        if (argc == 2) { // Select external file input when the user supplies exactly one path argument.
+            std::ifstream input(argv[1], std::ios::binary); // Open that path as raw bytes; the BitReader below borrows this stream.
+            if (!input) { // Check that file opening succeeded before creating a reader or parsing fields.
+                throw std::runtime_error("Could not open input file: " + std::string(argv[1])); // Send the failed path to the shared catch block instead of parsing an unusable stream.
+            } // End the branch guarded by !input; subsequent lines belong to its enclosing scope.
+            bitreader::BitReader reader(input); // Wrap the current file or memory stream in a reader that all nested parsers will share.
+            printDocument(bitreader::readDocument(reader)); // Parse the complete hierarchy first, then pass the resulting document to the printer above.
+        } else { // Switch from the external-file branch to the built-in example when no path was supplied.
+            // Demonstration format: one 16-bit header and two 40-bit records.
+            const std::string sample("\xB0\x02\x12\x3B\xAB\xCD\xE2\x45\x64\x12\x34\x57", 12); // Store the exact twelve sample bytes encoding one header and two records in the documented format.
+            std::istringstream input(sample); // Expose the sample bytes through a stream so the same BitReader and parser can consume them.
+            bitreader::BitReader reader(input); // Wrap the current file or memory stream in a reader that all nested parsers will share.
+            std::cout << "Parsing the built-in sample. Pass a file path to parse a file.\n"; // Explain which input branch is running before printing its parsed hierarchy.
+            printDocument(bitreader::readDocument(reader)); // Parse the complete hierarchy first, then pass the resulting document to the printer above.
+        } // End the built-in-sample branch; subsequent lines belong to its enclosing scope.
+    } catch (const std::exception& error) { // Handle standard exceptions from file opening or any nested parser after the try block ends.
+        std::cerr << "Parse error: " << error.what() << '\n'; // Print the caught diagnostic, including the consumed-bit position for reader failures.
+        return 1; // Return a failure exit code to PowerShell for the invalid arguments or caught error above.
+    } // End the exception handler; subsequent lines belong to its enclosing scope.
+    return 0; // Report success to the calling shell after the selected input has been parsed and printed.
+} // End the main function body; subsequent lines belong to its enclosing scope.

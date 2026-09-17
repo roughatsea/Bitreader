@@ -1,7 +1,7 @@
-<Solution>
-  <Configurations>
-    <Platform Name="x64" />
-    <Platform Name="x86" />
-  </Configurations>
-  <Project Path="Bitreader.vcxproj" />
-</Solution>
+<Solution> <!-- Define the solution that groups the application project and supported build platforms below. -->
+  <Configurations> <!-- Group the solution platforms available for the project reference below. -->
+    <Platform Name="x64" /> <!-- Expose the x64 platform as a selectable solution build target. -->
+    <Platform Name="x86" /> <!-- Expose the x86 platform as a selectable solution build target. -->
+  </Configurations> <!-- Close Configurations; following elements return to its parent. -->
+  <Project Path="Bitreader.vcxproj" /> <!-- Include Bitreader.vcxproj in this solution so its listed source and model files can be built together. -->
+</Solution> <!-- Close Solution; following elements return to its parent. -->

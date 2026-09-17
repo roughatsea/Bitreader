@@ -1,0 +1,2 @@
+# Ignore the .build directory used for local application/test executables, fixtures, and intermediate files.
+.build/

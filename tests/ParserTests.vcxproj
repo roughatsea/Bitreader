@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?> <!-- Declare XML version and text encoding so Visual Studio and MSBuild can read the elements below. -->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"> <!-- Define an MSBuild C++ project; its imported targets build the sources listed later in this file. -->
+  <ItemGroup Label="ProjectConfigurations"> <!-- Group available build options that the configuration-specific settings below will reference. -->
+    <ProjectConfiguration Include="Debug|x64"> <!-- Declare the Debug|x64 build option; its configuration and platform values are specified immediately below. -->
+      <Configuration>Debug</Configuration> <!-- Select Debug behavior for the build option declared by its enclosing ProjectConfiguration. -->
+      <Platform>x64</Platform> <!-- Select the x64 CPU platform for the enclosing project build option. -->
+    </ProjectConfiguration> <!-- Close ProjectConfiguration for Debug|x64; following elements return to its parent. -->
+    <ProjectConfiguration Include="Release|x64"> <!-- Declare the Release|x64 build option; its configuration and platform values are specified immediately below. -->
+      <Configuration>Release</Configuration> <!-- Select Release behavior for the build option declared by its enclosing ProjectConfiguration. -->
+      <Platform>x64</Platform> <!-- Select the x64 CPU platform for the enclosing project build option. -->
+    </ProjectConfiguration> <!-- Close ProjectConfiguration for Release|x64; following elements return to its parent. -->
+  </ItemGroup> <!-- Close ProjectConfigurations ItemGroup; following elements return to its parent. -->
+  <PropertyGroup Label="Globals"> <!-- Group shared project identity and SDK properties consumed by the C++ imports below. -->
+    <ProjectGuid>{36D61DB3-E08D-4A4E-B766-587E143D06A9}</ProjectGuid> <!-- Assign a stable project identity used by Visual Studio to distinguish it from other projects. -->
+    <Keyword>Win32Proj</Keyword> <!-- Identify this as a native Windows C++ project so Visual Studio uses its C++ project tools. -->
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion> <!-- Request the installed Windows 10 SDK family used by the compiler and linker imports below. -->
+  </PropertyGroup> <!-- Close Globals PropertyGroup; following elements return to its parent. -->
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" /> <!-- Load standard C++ defaults before defining this project's executable and toolset properties. -->
+  <PropertyGroup Label="Configuration"> <!-- Group executable and toolset properties for the active Debug or Release build. -->
+    <ConfigurationType>Application</ConfigurationType> <!-- Build an executable application, matching the main function in the listed source files. -->
+    <PlatformToolset>v145</PlatformToolset> <!-- Select the v145 C++ compiler and linker toolset for compiling the sources listed below. -->
+    <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries> <!-- Use debug runtime libraries for this debug build, supporting debugger inspection of the objects. -->
+    <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries> <!-- Use release runtime libraries for this release build rather than the debug runtime. -->
+  </PropertyGroup> <!-- Close Configuration PropertyGroup; following elements return to its parent. -->
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" /> <!-- Load compiler and platform properties after the project selects its toolset. -->
+  <PropertyGroup> <!-- Group output-directory properties used by the test compile and link steps below. -->
+    <OutDir>$(MSBuildThisFileDirectory)..\.build\tests\$(Platform)\$(Configuration)\</OutDir> <!-- Place the test executable under .build, organized by platform and configuration and ignored by Git. -->
+    <IntDir>$(OutDir)obj\</IntDir> <!-- Place test intermediate files below OutDir so object files stay with the matching test build. -->
+  </PropertyGroup> <!-- Close PropertyGroup; following elements return to its parent. -->
+  <ItemDefinitionGroup> <!-- Set defaults for compiler, linker, and manifest tasks in this test project. -->
+    <ClCompile> <!-- Group compiler options applied to the source files listed in the project's item groups. -->
+      <WarningLevel>Level4</WarningLevel> <!-- Select the compiler warning level for the source files in this enclosing build-settings group. -->
+      <SDLCheck>true</SDLCheck> <!-- Enable additional compiler safety diagnostics for the parser, reader, and other listed sources. -->
+      <ConformanceMode>true</ConformanceMode> <!-- Enable standards-conforming C++ behavior for templates and the classes in the project. -->
+      <LanguageStandard>stdcpp20</LanguageStandard> <!-- Compile the sources as C++20, matching the project's documented language version. -->
+    </ClCompile> <!-- Close ClCompile; following elements return to its parent. -->
+    <Link> <!-- Group linker options that combine compiled objects into the executable. -->
+      <SubSystem>Console</SubSystem> <!-- Build a console program so its main function and cout/cerr output work from PowerShell. -->
+    </Link> <!-- Close Link; following elements return to its parent. -->
+  </ItemDefinitionGroup> <!-- Close ItemDefinitionGroup; following elements return to its parent. -->
+  <ItemGroup> <!-- Group related project items, such as source files, headers, or Solution Explorer folders. -->
+    <ClCompile Include="ParserTests.cpp" /> <!-- Compile the test executable entry point and reader/hierarchy assertions as part of this executable. -->
+    <ClCompile Include="..\BinaryParser.cpp" /> <!-- Compile the field-to-setter mappings and parent-child assembly functions as part of this executable. -->
+    <ClCompile Include="..\io\BitReader.cpp" /> <!-- Compile the implementation that consumes bits across byte boundaries as part of this executable. -->
+  </ItemGroup> <!-- Close ItemGroup; following elements return to its parent. -->
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" /> <!-- Load C++ build targets that compile and link the source items listed above. -->
+</Project> <!-- Close Project; following elements return to its parent. -->

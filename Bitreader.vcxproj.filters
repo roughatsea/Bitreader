@@ -1,22 +1,54 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Bitreader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-</Project>
+﻿<?xml version="1.0" encoding="utf-8"?> <!-- Declare XML version and text encoding so Visual Studio and MSBuild can read the elements below. -->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"> <!-- Define Solution Explorer organization for the files listed in Bitreader.vcxproj; this file does not compile them. -->
+  <ItemGroup> <!-- Group related project items, such as source files, headers, or Solution Explorer folders. -->
+    <Filter Include="Source Files"> <!-- Declare the Source Files virtual folder whose identity and extension associations follow. -->
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier> <!-- Give this Solution Explorer folder a stable identity; its assigned files are listed below. -->
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions> <!-- List filename extensions Visual Studio associates with this folder; actual files are assigned below. -->
+    </Filter> <!-- Close Filter for Source Files; following elements return to its parent. -->
+    <Filter Include="Header Files"> <!-- Declare the Header Files virtual folder whose identity and extension associations follow. -->
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier> <!-- Give this Solution Explorer folder a stable identity; its assigned files are listed below. -->
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions> <!-- List filename extensions Visual Studio associates with this folder; actual files are assigned below. -->
+    </Filter> <!-- Close Filter for Header Files; following elements return to its parent. -->
+    <Filter Include="Resource Files"> <!-- Declare the Resource Files virtual folder whose identity and extension associations follow. -->
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier> <!-- Give this Solution Explorer folder a stable identity; its assigned files are listed below. -->
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions> <!-- List filename extensions Visual Studio associates with this folder; actual files are assigned below. -->
+    </Filter> <!-- Close Filter for Resource Files; following elements return to its parent. -->
+  </ItemGroup> <!-- Close ItemGroup; following elements return to its parent. -->
+  <ItemGroup> <!-- Group related project items, such as source files, headers, or Solution Explorer folders. -->
+    <ClCompile Include="Bitreader.cpp"> <!-- Associate Bitreader.cpp with the virtual folder specified below; its compilation is configured in Bitreader.vcxproj. -->
+      <Filter>Source Files</Filter> <!-- Show the enclosing source or header under Source Files in Solution Explorer. -->
+    </ClCompile> <!-- Close ClCompile for Bitreader.cpp; following elements return to its parent. -->
+    <ClCompile Include="BinaryParser.cpp"> <!-- Associate BinaryParser.cpp with the virtual folder specified below; its compilation is configured in Bitreader.vcxproj. -->
+      <Filter>Source Files</Filter> <!-- Show the enclosing source or header under Source Files in Solution Explorer. -->
+    </ClCompile> <!-- Close ClCompile for BinaryParser.cpp; following elements return to its parent. -->
+    <ClCompile Include="io\BitReader.cpp"> <!-- Associate io\BitReader.cpp with the virtual folder specified below; its compilation is configured in Bitreader.vcxproj. -->
+      <Filter>Source Files</Filter> <!-- Show the enclosing source or header under Source Files in Solution Explorer. -->
+    </ClCompile> <!-- Close ClCompile for io\BitReader.cpp; following elements return to its parent. -->
+  </ItemGroup> <!-- Close ItemGroup; following elements return to its parent. -->
+  <ItemGroup> <!-- Group related project items, such as source files, headers, or Solution Explorer folders. -->
+    <ClInclude Include="BinaryParser.h"> <!-- Register the public parser declarations with Visual Studio; the C++ include directives determine compilation dependencies. -->
+      <Filter>Header Files</Filter> <!-- Show the enclosing source or header under Header Files in Solution Explorer. -->
+    </ClInclude> <!-- Close ClInclude for BinaryParser.h; following elements return to its parent. -->
+    <ClInclude Include="io\BitReader.h"> <!-- Register the stream reader declaration and its cached-bit state with Visual Studio; the C++ include directives determine compilation dependencies. -->
+      <Filter>Header Files</Filter> <!-- Show the enclosing source or header under Header Files in Solution Explorer. -->
+    </ClInclude> <!-- Close ClInclude for io\BitReader.h; following elements return to its parent. -->
+    <ClInclude Include="models\BinaryDocument.h"> <!-- Register the root model that owns the header and records with Visual Studio; the C++ include directives determine compilation dependencies. -->
+      <Filter>Header Files</Filter> <!-- Show the enclosing source or header under Header Files in Solution Explorer. -->
+    </ClInclude> <!-- Close ClInclude for models\BinaryDocument.h; following elements return to its parent. -->
+    <ClInclude Include="models\FileHeader.h"> <!-- Register the header model that owns its FormatInfo child with Visual Studio; the C++ include directives determine compilation dependencies. -->
+      <Filter>Header Files</Filter> <!-- Show the enclosing source or header under Header Files in Solution Explorer. -->
+    </ClInclude> <!-- Close ClInclude for models\FileHeader.h; following elements return to its parent. -->
+    <ClInclude Include="models\FormatInfo.h"> <!-- Register the version and tagged-flag leaf model with Visual Studio; the C++ include directives determine compilation dependencies. -->
+      <Filter>Header Files</Filter> <!-- Show the enclosing source or header under Header Files in Solution Explorer. -->
+    </ClInclude> <!-- Close ClInclude for models\FormatInfo.h; following elements return to its parent. -->
+    <ClInclude Include="models\Measurement.h"> <!-- Register the magnitude and exponent leaf model with Visual Studio; the C++ include directives determine compilation dependencies. -->
+      <Filter>Header Files</Filter> <!-- Show the enclosing source or header under Header Files in Solution Explorer. -->
+    </ClInclude> <!-- Close ClInclude for models\Measurement.h; following elements return to its parent. -->
+    <ClInclude Include="models\Record.h"> <!-- Register the record model that owns metadata and measurement children with Visual Studio; the C++ include directives determine compilation dependencies. -->
+      <Filter>Header Files</Filter> <!-- Show the enclosing source or header under Header Files in Solution Explorer. -->
+    </ClInclude> <!-- Close ClInclude for models\Record.h; following elements return to its parent. -->
+    <ClInclude Include="models\RecordMetadata.h"> <!-- Register the ID, category, and active-flag leaf model with Visual Studio; the C++ include directives determine compilation dependencies. -->
+      <Filter>Header Files</Filter> <!-- Show the enclosing source or header under Header Files in Solution Explorer. -->
+    </ClInclude> <!-- Close ClInclude for models\RecordMetadata.h; following elements return to its parent. -->
+  </ItemGroup> <!-- Close ItemGroup; following elements return to its parent. -->
+</Project> <!-- Close Project; following elements return to its parent. -->

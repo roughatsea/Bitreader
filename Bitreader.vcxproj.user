@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup />
-</Project>
+﻿<?xml version="1.0" encoding="utf-8"?> <!-- Declare XML version and text encoding so Visual Studio and MSBuild can read the elements below. -->
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"> <!-- Define per-user Visual Studio project settings, separate from the shared compiler and source configuration. -->
+  <PropertyGroup /> <!-- Keep per-user properties empty; the shared project supplies its build settings. -->
+</Project> <!-- Close Project; following elements return to its parent. -->
